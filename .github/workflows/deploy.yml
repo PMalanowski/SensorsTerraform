@@ -8,6 +8,11 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+        AWS_REGION: us-east-1
 
     steps:
       - name: Checkout repo
@@ -38,19 +43,9 @@ jobs:
           zip -r ../../lambdas/processor.zip .
 
       - name: Upload Lambda packages to S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-          AWS_REGION: us-east-1
         run: |
           aws s3 cp lambdas/distributor.zip s3://lambda-codes-tf/distributor.zip
           aws s3 cp lambdas/processor.zip s3://lambda-codes-tf/processor.zip
 
       - name: Trigger Terraform Apply again to update Lambda code
         run: terraform apply -auto-approve
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
-          AWS_REGION: us-east-1
