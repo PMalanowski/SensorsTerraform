@@ -2,3 +2,4 @@
 terraform.tfstate
 terraform.tfstate.backup
 *.zip
+.terraform.lock.hcl
